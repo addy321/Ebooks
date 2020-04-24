@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewData["Title"] = "管理员页面";
+}
+<style>
+    .container {
+        max-width: 1359px;
+    }
+    .col-8 {
+        -ms-flex: 0 0 66.666667%;
+        flex: 1 0 60.666667%;
+        max-width: 80.666667%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-4" style="flex: 0;">
+        <div class="list-group" id="list-tab" role="tablist"  style="width: 180px;">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">我的信息</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">书籍管理</a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">上传书籍</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">用户管理</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-opinion" role="tab" aria-controls="settings">用户意见</a>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                <h3>管理员</h3>
+                <h3>admin</h3>
+            </div>
+            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+               
+                <table class="table table-hover books">
+                    <thead><tr><th>编号</th><th>书名</th><th>摘要</th><th>作者</th><th>上架时间</th><th>收藏数</th><th>背景图</th><th>文件名</th><th>类型id</th><th>状态类型</th><th>操作</th></tr></thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                <div class="centre" style="width: 50%;
+                    position: absolute;
+                    top: 5%;
+                    left: 15%;">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">书籍名</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" name="title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">摘要</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" name="summary">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">作者</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" name="author">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">背景图</label>
+                            <div class="col-sm-10">
+                                <div class="input-group mb-3">
+                                    <input id="imgForm" type="file">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">书籍</label>
+                            <div class="col-sm-10">
+                                <div class="input-group mb-3">
+                                    <input id="txtFrom" type="file">
+                                    <span>只支持.txt(utf-8格式)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">类型</label>
+                            <div class="col-sm-10">
+                                <select id="types" style="width:200px;">
+                                    <option value="0">请选择</option>
+                                    <option value="1">武侠</option>
+                                    <option value="2">科幻</option>
+                                    <option value="3">色情</option>
+                                    <option value="4">经典</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="btn btn-primary Upload" style="margin-top: 20px; width: 100px;">上传</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                <table class="table table-hover users">
+                    <thead><tr><th>编号</th><th>账号</th><th>密码</th><th>用户名</th></tr></thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="list-opinion" role="tabpanel" aria-labelledby="list-settings-list">
+                <table class="table table-hover opinion">
+                    <thead><tr><th>编号</th><th>用户编号</th><th>用户名称</th><th>内容</th></tr></thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(".navbar-collapse").html("<h1>管理员页面</h1>")
+    $(".navbar-collapse").attr("class", "navbar-collapse")
+    showBooks();
+    function showBooks() {
+        $.get("/Home/GetBooks", function (result) {
+            var bookshtml = ""
+            for (var i = 0; i < result.length; i++) {
+                bookshtml += '<tr><td>' + result[i].id + '</td> <td>' + result[i].title + '</td> <td>' + result[i].summary + '</td> <td>' + result[i].author + '</td> '
+                bookshtml += '<td>' + result[i].addedTime + '</td> <td>' + result[i].collection + '</td> <td>' + result[i].imgUrl + '</td><td>' + result[i].txtUrl + '</td> <td>' + result[i].types + '</td> '
+                bookshtml += '<td>' + (result[i].status == 0 ? "已上架" : "已下架") + '</td><td><button type="button" class="btn btn-primary btn-sm" onclick=updateBooksStatus(' + result[i].id+')>' + (result[i].status == 0 ? "下架" : "上架") + '</button></td></tr>'
+            }
+            $(".books>tbody").html(bookshtml)
+            if (result.length < 1) {
+                $("#list-profile").html("<h1>没有数据<h1>")
+            }
+        });
+    }
+
+    function updateBooksStatus(booksid) {
+        $.post("/Home/UpdatebooksStatus", { "booksid": booksid}, function (result) {
+            if (result == 1) {
+                alert("请求成功！")
+                showBooks()
+            } else {
+                alert("请求失败！")
+            }
+        })
+    }
+
+    $.get("/Home/GetOpinions", function (result) {
+        var opinionshtml = ""
+        for (var i = 0; i < result.length; i++) {
+            opinionshtml += '<tr><td>' + result[i].id + '</td> <td>' + result[i].userid + '</td> <td>' + result[i].username + '</td> <td>' + result[i].content + '</td> </tr> '
+        }
+        $(".opinion>tbody").html(opinionshtml)
+        if (result.length < 1) {
+            $("#list-opinion").html("<h1>没有数据<h1>")
+        }
+    });
+    showUsers()
+    function showUsers() {
+        $.get("/Home/GetUsers", function (result) {
+            var opinionshtml = ""
+            for (var i = 0; i < result.length; i++) {
+                opinionshtml += '<tr><td>' + result[i].id + '</td> <td>' + result[i].account + '</td> <td>' + result[i].password + '</td> <td>' + result[i].userName + '</td><td><a href="#" onclick="delUser(' + result[i].id + ')">删除</a></td>  </tr> '
+            }
+            $(".users>tbody").html(opinionshtml)
+            if (result.length < 1) {
+                $("#list-settings").html("<h1>没有数据<h1>")
+            }
+        });
+    }
+   
+    function delUser(userId) {
+        $.post("/Home/DelUser", { "userId": userId }, function (result) {
+            if (result == 1) {
+                alert("删除成功")
+                showUsers()
+            } else {
+                alert("删除失败")
+            }
+        })
+    }
+
+    $(".Upload").click(function () {
+       
+        var title = $("input[name='title']").val().trim()
+        var summary = $("input[name='summary']").val().trim()
+        var author = $("input[name='author']").val().trim()
+        var imgfile = document.getElementById('imgForm')
+        var txtfile = document.getElementById('txtFrom')
+        var Types = $("#types").val()
+        $.post("/Home/Addbooks", { "title": title, "summary": summary, "author": author, "imgUrl": imgfile.files[0].name, "Types": Types, "txtUrl": txtfile.files[0].name }, function(result) {
+            if (result == 1) {
+                alert("上传成功！")
+                showUsers()
+            } else {
+                alert("上传失败！")
+            }
+        })
+        upload(imgfile)
+        upload(txtfile)
+         
+    })
+
+
+    function upload(file) {
+        let formData = new FormData()
+        let temp = file.files[0]
+        console.log(temp)
+        if (temp) {
+            formData.append('files', temp)
+            $.ajax({
+                url: "/Home/UploadFiles",
+                type: "POST",
+                data: formData,
+                processData: false, // 告诉jQuery不要去处理发送的数据
+                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+                success: function (result) {
+                    console.log(result)
+                }
+            })
+        }
+    }
+
+</script>
+

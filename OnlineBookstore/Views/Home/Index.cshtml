@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+    <div class="input-group mb-3" style="width:400px;margin:auto;">
+        <img src="~/img/eleps.png" style="display:block" />
+    </div>
+<div class="input-group mb-3" style="width:500px;margin:auto;">
+  <input type="text" class="form-control" name="title" placeholder="请输入你要搜索的类型">
+  <div class="input-group-append" id="button-addon4">
+      <select id="types">
+          <option value="0">请选择</option>
+          <option value="1">武侠</option>
+          <option value="2">科幻</option>
+          <option value="3">色情</option>
+          <option value="4">经典</option>
+      </select>
+      <button class="btn btn-outline-secondary" type="button" onclick="select()">搜索</button>
+  </div>
+</div>
+<div class="Checklist" style="display: inline-block;margin-bottom:30px;">
+
+</div>
+
+
+<style>
+    .Checklist > div {
+        float: left;
+        display: inline-block;
+        margin: 0 40px;
+    }
+</style>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    function select() {
+        var types = $("#types").val()
+        var title = $("input[name='title']").val().trim()
+        if (title != "" || types!=0) {
+            $.ajax({
+                type: 'get',
+                url: "/Home/GetBooks",
+                data: { "title": title, "Types": types },
+                datatype: 'json',
+                success: function (res) {
+                    $(".Checklist").html("");
+                    var dataHtml = "";
+                    for (var i = 0; i < res.length;i++) {
+                        dataHtml += '<div class="card" style="width: 18rem;">'
+                        dataHtml += '<img src="/img/' + res[i].imgUrl + '" class="card-img-top" alt="...">'
+                        dataHtml+='<div class="card-body">'
+                        dataHtml += '<h5 class="card-title">' + res[i].title + '</h5>'
+                        dataHtml += '<a href="/Home/Seedetails?booksid=' + res[i].id + '" class="btn btn-primary">点击查看详情</a></div> </div> '
+                    }
+                    if (res.length < 1) {
+                        alert("没有你要搜索的内容")
+                    }
+                    $(".Checklist").html(dataHtml);
+                }, error: function (err) {
+                    console.log(err)
+                    alert("请求异常")
+                }
+            });
+        }
+    }
+     
+</script>

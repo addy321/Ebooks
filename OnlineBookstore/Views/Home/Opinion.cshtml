@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<div class="jumbotron">
+    <h1 class="display-4">你好！</h1>
+    <p class="lead">在此你可以填写你对该网址的评价</p>
+    <hr class="my-4">
+    <p>
+        <textarea rows="10" cols="30" style="margin: 0px; width: 742px; height: 251px;">
+			
+		</textarea>
+    </p>
+    <a class="btn btn-primary btn-lg" href="" role="button" onclick="sumbit()">提交</a>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function sumbit() {
+        var content = $("textarea").val().trim();
+        var userName = getCookie("userName")
+        var userid = getCookie("userId")
+        if (userName == undefined || userid == undefined) {
+            alert("请登录")
+            return;
+        }
+        if (content!="") {
+            $.ajax({
+                type: 'post',
+                url: "/Home/AddOpinion",
+                data: { "content": content, "userid": userid, "username": userName },
+                datatype: 'json',
+                success: function (res) {
+                    console.log(res)
+                    if (res == 1) {
+                        alert("提交成功！")
+                        location.reload();
+                    } else {
+                        alert("提交失败！")
+                    }
+                }, error: function (err) {
+                    console.log(err)
+                    alert("请求异常")
+                }
+            });
+        }
+    }
+
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    } 
+</script>

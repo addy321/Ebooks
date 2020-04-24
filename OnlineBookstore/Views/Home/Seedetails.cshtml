@@ -1,0 +1,202 @@
+﻿
+@{
+    ViewData["Title"] = "书籍详情";
+}
+
+<div class="card mb-3" style="max-width: 940px;">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            <img src="~/img/cover_8833.jpg" class="card-img" alt="..." id="imgUrl">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title"><label>书名：</label><span id="title"></span></h5>
+                <h5 class="card-title"><label>作者：</label><span id="author">张三</span></h5>
+                <h5 class="card-title"><label>上架时间：</label><span id="addedTime">2020/4/19</span></h5>
+                <h5 class="card-title"><label>收藏量：</label><span id="collection"></span></h5>
+                <p class="card-text">
+                    <label>摘要：</label>
+                    <span id="summary">
+                        本书是数值方法、MATLAB和工程计算方面的优秀教材。本书的表述方
+                        式特别有助于读者充分学习和正确使用MATLAB中的数学函数，了解它们的局限性，并对其进行适当的修改。本书使用了大量的计算机图形，还包括数值算法的交互式图形演示。
+                    </span>
+                </p>
+            </div>
+            <div class="card-body" style="position: absolute;bottom: 0px;">
+                <button type="button" class="btn btn-primary" onclick="openTxt()">阅读</button>
+                <button type="button" class="btn btn-primary" onclick="AddCollect()">收藏</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" name="content" placeholder="留下你的精彩评论">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2">发送</button>
+    </div>
+</div>
+<ul class="list-group list-group-flush ">
+    
+</ul>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function oneValues() {
+        var result;
+        var url = window.location.search; //获取url中"?"符后的字串
+        if (url.indexOf("?") != -1) {
+            result = url.substr(url.indexOf("=") + 1);
+        }
+        return result;
+    }
+    var books = null;
+    $(function () {
+        var booksid= oneValues();
+        $.ajax({
+            type: 'get',
+            url: "/Home/GetTheBooks",
+            data: { "booksid": booksid},
+            datatype: 'json',
+            success: function (res) {
+                books = res
+                console.log(res)
+                if (res != null) {
+                    $("#imgUrl").attr("src", "/img/"+res.imgUrl)
+                    $("#summary").text(res.summary)
+                    $("#author").text(res.author)
+                    $("#addedTime").text(res.addedTime)
+                    $("#title").text(res.title)
+                    $("#collection").text(res.collection)
+                } else {
+                    alert("没有此书籍信息")
+                    window.location.href = '/Home/index';
+                }
+            }, error: function (err) {
+                console.log(err)
+                alert("请求异常")
+            }
+        });
+        showValuations(booksid)
+    })
+    function showValuations(booksid) {
+        $.ajax({
+            type: 'get',
+            url: "/Home/GetValuations",
+            data: { "booksid": booksid },
+            datatype: 'json',
+            success: function (res) {
+                $(".list-group").html("");
+                var dataHtml = "";
+                for (var i = 0; i < res.length; i++) {
+                    dataHtml += '<li class="list-group-item"><span>' + res[i].userName + ':</span> <span>' + res[i].content + '</span></li> '
+                }
+                if (res.length < 1) {
+                    dataHtml += '<li class="list-group-item">暂无评论</li>'
+                }
+                $(".list-group").html(dataHtml);
+            }, error: function (err) {
+                console.log(err)
+                alert("请求异常")
+            }
+        }); 
+    }
+
+
+    $("#button-addon2").click(function () {
+        var content = $("input[name='content']").val().trim()
+        var booksid = books.id
+        var userName = getCookie("userName")
+        if (userName == undefined) {
+            window.location.href = '/Home/login';
+        }
+        if (content != "" ) {
+            $.ajax({
+                type: 'post',
+                url: "/Home/addValuations",
+                data: { "content": content, "booksid": booksid, "userName": userName},
+                datatype: 'json',
+                success: function (res) {
+                    console.log(res)
+                    if (res == 1) { 
+                        showValuations(booksid)
+                        $("input[name='content']").val("")
+                    } else {
+                        alert("发送失败！")
+                    }
+                }, error: function (err) {
+                    console.log(err)
+                    alert("请求异常")
+                }
+            });
+        }
+    })
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    } 
+     
+    function AddCollect() {
+        var booksid = books.id
+        var userid = getCookie("userId")
+        if (userid == undefined) {
+            window.location.href = '/Home/login';
+        }
+        $.ajax({
+            type: 'get',
+            url: "/Home/getCollect",
+            data: { "booksid": booksid, "userid": userid},
+            datatype: 'json',
+            success: function (res) {
+                if (res != null) {
+                    alert("已收藏")
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: "/Home/AddCollect",
+                        data: { "booksid": booksid, "userid": userid },
+                        datatype: 'json',
+                        success: function (res) {
+                            console.log(res)
+                            if (res == 1) {
+                                var count = $("#collection").text()
+                                $("#collection").text(count*1+1);
+                                updatebooks(booksid)
+                            } else {
+                                alert("收藏失败！")
+                            }
+                        }, error: function (err) {
+                            console.log(err)
+                            alert("请求异常")
+                        }
+                    });
+                }
+            }, error: function (err) {
+                console.log(err)
+                alert("请求异常")
+            }
+        }); 
+        
+    }
+    function openTxt() {
+        window.location.href = '/text/' + books.txtUrl;
+    }
+
+    function updatebooks(booksid) {
+        $.ajax({
+            type: 'post',
+            url: "/Home/updatebooks",
+            data: {  "booksid": booksid },
+            datatype: 'json',
+            success: function (res) {
+                console.log(res)
+            }, error: function (err) {
+                console.log(err)
+                alert("请求异常")
+            }
+        });
+    }
+</script>

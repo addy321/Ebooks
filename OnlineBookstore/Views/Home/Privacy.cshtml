@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "已收藏书籍";
+}
+<h1>@ViewData["Title"]</h1>
+
+
+<div class="Collect">
+    <table class="table table-hover">
+        <thead><tr><th>书名</th><th>作者</th></tr></thead>
+        <tbody class="datalist">
+        </tbody>
+    </table>
+    
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script> 
+<script>
+    showData();
+    function showData() {
+        var userid = getCookie("userId")
+        $.ajax({
+            type: 'get',
+            url: "/Home/getUserBooks",
+            data: { "userid": userid},
+            datatype: 'json',
+            success: function (res) {
+                $(".datalist").html("")
+                var tabhtml=""
+                for (var i = 0; i < res.length; i++) {
+                    tabhtml += '<tr><td>' + res[i].title + '</td> <td>' + res[i].author+'</td> <td style="text-align: center;">'
+                    tabhtml += '<a href="/Home/Seedetails?booksid=' + res[i].id+'" style=" text-decoration: none;">查询详情</a></td></tr>'
+                }
+                $(".datalist").html(tabhtml)
+                if (res.length < 1) {
+                    $(".Collect").html("<h1 style='text-align: center;'>你还没有收藏书籍</h1>")
+                }
+            }, error: function (err) {
+                console.log(err)
+                alert("请求异常")
+            }
+        });
+    }
+
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg))
+            return unescape(arr[2]);
+        else
+            return null;
+    } 
+</script>
