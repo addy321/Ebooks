@@ -23,7 +23,7 @@
                 </p>
             </div>
             <div class="card-body" style="position: absolute;bottom: 0px;">
-                <button type="button" class="btn btn-primary" onclick="openTxt()">阅读</button>
+                <button type="button" class="btn btn-primary" onclick="openTxt()">跳转阅读书籍处</button>
                 <button type="button" class="btn btn-primary" onclick="AddCollect()">收藏</button>
             </div>
         </div>
@@ -182,7 +182,7 @@
         
     }
     function openTxt() {
-        window.location.href = '/text/' + books.txtUrl;
+        window.location.href = 'https://localhost:44397/lzTxt-js-master/demo.html';
     }
 
     function updatebooks(booksid) {
@@ -199,4 +199,6 @@
             }
         });
     }
+
+
 </script>

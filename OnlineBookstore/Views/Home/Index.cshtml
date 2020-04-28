@@ -16,8 +16,11 @@
                 <option value="2">科幻</option>
                 <option value="3">色情</option>
                 <option value="4">童书</option>
-                <option value="4">电子书</option>
-                <option value="4">经典</option>
+                <option value="5">电子书</option>
+                <option value="6">教育</option>
+                <option value="7">经典</option>
+                <option value="8">经典</option>
+                <option value="9">经典</option>
             </select>
             <button class="btn btn-outline-secondary" type="button" onclick="select()">搜索</button>
         </div>
@@ -26,16 +29,16 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">童书</a>
+    <a class="navbar-brand" href="#" value="1">童书</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">电子书 <span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="#">小说</a>
-            <a class="nav-item nav-link" href="#">文学</a>
-            <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">艺术</a>
+            <a class="nav-item nav-link active" href="#" value="2">电子书 <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="#" value="3">武侠</a>
+            <a class="nav-item nav-link" href="#" value="4">色情</a>
+            <a class="nav-item nav-link disabled" value="5" href="#" tabindex="-1" aria-disabled="true">艺术</a>
         </div>
         <h3 style="text-align:center;width:813px">全部分类</h3>
     </div>
@@ -43,15 +46,15 @@
 <div class="row">
     <div class="col-3">
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="border: 5px solid #d5c4c4;">
-            <a class="nav-link" href="#" aria-controls="v-pills-home">武侠，仙侠，穿越</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-profile">科教,奇幻，医学</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-messages">计算机，java，C#</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
-            <a class="nav-link" href="#" aria-controls="v-pills-settings">言情，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-home" value="1">武侠，仙侠，穿越</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-profile" value="2">科教,奇幻，医学</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-messages" value="3">计算机，java，C#</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="4">言情，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="5">教育，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="6">言情，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="7">言情，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="8">言情，色情，爱情</a>
+            <a class="nav-link" href="#" aria-controls="v-pills-settings" value="9">言情，色情，爱情</a>
         </div>
     </div> 
     <div class="col-9">
@@ -80,7 +83,7 @@
 </div>
 
 
-<div class="Checklist" style="display: inline-block;margin-bottom:30px;">
+<div class="Checklist" style="display: inline-block;margin-bottom:30px;margin-top: 10px;">
 
 </div>
 
@@ -95,8 +98,13 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
 
-    function select() {
-        var types = $("#types").val()
+    function select(value) {
+        var types=""
+        if (value != undefined) {
+            types = value
+        } else {
+            types = $("#types").val()
+        }
         var title = $("input[name='title']").val().trim()
         if (title != "" || types != 0) {
             $.ajax({
@@ -134,4 +142,8 @@
         $(this).addClass("active")
     });
 
+    $("a").click(function () {
+        var value = $(this).attr("value")
+        select(value)
+    })
 </script>

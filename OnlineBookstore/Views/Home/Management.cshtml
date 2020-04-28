@@ -15,12 +15,13 @@
 
 <div class="row">
     <div class="col-4" style="flex: 0;">
-        <div class="list-group" id="list-tab" role="tablist"  style="width: 180px;">
+        <div class="list-group" id="list-tab" role="tablist" style="width: 180px;">
             <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">我的信息</a>
             <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">书籍管理</a>
             <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">上传书籍</a>
             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">用户管理</a>
             <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-opinion" role="tab" aria-controls="settings">用户意见</a>
+            <!--<a class="list-group-item list-group-item-action" id="list-dada-list" data-toggle="list" href="#list-dada" role="tab" aria-controls="settings">更新书籍章节</a>-->
         </div>
     </div>
     <div class="col-8">
@@ -30,19 +31,15 @@
                 <h3>admin</h3>
             </div>
             <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-               
+
                 <table class="table table-hover books">
-                    <thead><tr><th>编号</th><th>书名</th><th>摘要</th><th>作者</th><th>上架时间</th><th>收藏数</th><th>背景图</th><th>文件名</th><th>类型id</th><th>状态类型</th><th>操作</th></tr></thead>
+                    <thead><tr><th>编号</th><th>书名</th><th>作者</th><th>上架时间</th><th>收藏数</th><th>背景图</th><th>文件名</th><th>类型id</th><th>状态类型</th><th>操作</th></tr></thead>
                     <tbody>
-                        
                     </tbody>
                 </table>
             </div>
             <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
-                <div class="centre" style="width: 50%;
-                    position: absolute;
-                    top: 5%;
-                    left: 15%;">
+                <div class="centre" style="width: 50%;">
                     <form class="form-horizontal">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">书籍名</label>
@@ -53,7 +50,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">摘要</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" name="summary">
+                                <textarea cols="80" rows="6" id="summary"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -87,7 +84,10 @@
                                     <option value="1">武侠</option>
                                     <option value="2">科幻</option>
                                     <option value="3">色情</option>
-                                    <option value="4">经典</option>
+                                    <option value="4">童书</option>
+                                    <option value="5">电子书</option>
+                                    <option value="6">教育</option>
+                                    <option value="7">经典</option>
                                 </select>
                             </div>
                         </div>
@@ -103,7 +103,6 @@
                 <table class="table table-hover users">
                     <thead><tr><th>编号</th><th>账号</th><th>密码</th><th>用户名</th></tr></thead>
                     <tbody>
-
                     </tbody>
                 </table>
             </div>
@@ -114,6 +113,19 @@
                     </tbody>
                 </table>
             </div>
+            <!--<div class="tab-pane fade" id="list-dada" role="tabpanel" aria-labelledby="list-settings-list">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="title" placeholder="请输入书籍编号">
+            <div class="input-group-append" id="button-addon4">
+                <button class="btn btn-outline-secondary" type="button" onclick="select()">搜索</button>
+            </div>
+        </div>
+
+        <input type="text" name="filename1" value="c:\123.txt">
+        <input type="button" value="浏览..." onClick="filename2.click();filename1.value=filename2.value;">
+        <input type="file" name="filename2" style="display:none">
+        <input type="file" name="file1"><br>
+    </div>-->
         </div>
     </div>
 </div>
@@ -127,7 +139,7 @@
         $.get("/Home/GetBooks", function (result) {
             var bookshtml = ""
             for (var i = 0; i < result.length; i++) {
-                bookshtml += '<tr><td>' + result[i].id + '</td> <td>' + result[i].title + '</td> <td>' + result[i].summary + '</td> <td>' + result[i].author + '</td> '
+                bookshtml += '<tr><td>' + result[i].id + '</td> <td>' + result[i].title + '</td> <td>' + result[i].author + '</td> '
                 bookshtml += '<td>' + result[i].addedTime + '</td> <td>' + result[i].collection + '</td> <td>' + result[i].imgUrl + '</td><td>' + result[i].txtUrl + '</td> <td>' + result[i].types + '</td> '
                 bookshtml += '<td>' + (result[i].status == 0 ? "已上架" : "已下架") + '</td><td><button type="button" class="btn btn-primary btn-sm" onclick=updateBooksStatus(' + result[i].id+')>' + (result[i].status == 0 ? "下架" : "上架") + '</button></td></tr>'
             }
@@ -187,7 +199,7 @@
     $(".Upload").click(function () {
        
         var title = $("input[name='title']").val().trim()
-        var summary = $("input[name='summary']").val().trim()
+        var summary = $("#summary").val().trim()
         var author = $("input[name='author']").val().trim()
         var imgfile = document.getElementById('imgForm')
         var txtfile = document.getElementById('txtFrom')

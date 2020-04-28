@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		
+		<title></title>
+		<style type="text/css">
+		html{
+			font-size: 62.5%;
+		}
+			html,body{
+				margin: 0 0;
+				padding: 0 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			/*#canvas{
+				width: 100%;
+				height: 100%;
+			}*/
+			#next{
+				/*position: fixed;
+				bottom: 0px;
+				right: 0px;
+				width: 20px;
+				height: 20px;
+				background: firebrick;*/
+				opacity: 0;
+				height: 30px;
+			    position: absolute;
+			    left: 0px;
+			    top: 0px;
+			    width: 1000px;
+			    height: 1000px;
+			}
+			#before{
+				position: fixed;
+				bottom: 0px;
+				left: 0px;
+				width: 20px;
+				height: 20px;
+				background: firebrick;
+				opacity: 0.6;
+			}
+			.pop{
+				position: fixed;
+				bottom: 0px;
+				left: 0px;
+				height: 80px;
+				background: #333333;
+				z-index: 100;
+				width: 100%;
+				color: white;
+				padding: 10px 0px;
+				display: none;
+			}
+			.progress{
+				position: absolute;
+				width: 80%;
+				height: 2px;
+				background: white;
+				left: 10%;
+				top: 5px;
+			}
+			#progress_top{ 
+				position: absolute;
+				width: 10%;
+				height: 2px;
+				background: gold;
+				left: 10%;
+				top: 5px;
+			}
+			.netx-container{
+				top: 0px;
+				left: 0px;
+	 			right: 0px;
+				bottom: 0px;
+				width: 50%;
+				margin: auto;
+				position: absolute;
+				height: 100%;
+				height: 35px;
+				text-align: center;
+				line-height: 35px;
+				font-size: 2rem;
+				border: 1px solid #cacaca;
+				border-radius: 5px;
+				overflow: hidden;
+			}
+			.page-container{
+				border-bottom: 1px solid #CACACA;
+				font-size: 1.6rem;
+				height: 35px;
+				text-align: center;
+
+			}
+			.progress-container{
+				position: relative;
+			}
+			.font-container{
+				width: 50%;
+				border: 1px solid #CACACA;
+				border-radius: 5px;
+				display: flex;
+			}
+			.font-container span{
+				flex: 3;
+				box-sizing: border-box;
+				/*width: 33%;*/
+				/*float: left;*/
+				display: inline-block;
+				text-align: center;
+				font-size: 1.6rem;
+				height: 25px;
+				line-height: 25px;
+				border-left: 1px solid #CACACA;
+			}
+			.font-container span:first-child{
+				border-left: 0px solid #CACACA;
+			}
+			.font-container .active{
+				background: gold;
+				color: #333333;
+			}
+			.bottom-cont{
+				position: relative;
+				width: 90%;
+				margin: 0 auto;
+				margin-top: 10px;
+			}
+			.color-container{
+				position: absolute;
+				right: 10%;
+				top: 0px;
+			}
+			.color-container span{
+				width: 50%;
+				float: left;
+				display: block;
+				width: 25px;
+				height: 25px;
+				background: blanchedalmond;
+				border-radius: 50%;
+				border: 1px solid #CACACA;
+				margin-left: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="netx-container" id="showchange">
+			<span >选择书籍</span>
+			<input type="file" name="next" id="next" value="" />
+		</div>
+
+		<!--<div id="next"></div>
+		<div id="before"></div>-->
+		<canvas id="canvas" >
+		</canvas>
+		<div class="pop" id="pop">
+			<div class="page-container">
+				<span id="page">1</span> / <span id="total">12</span>
+				<div class="progress-container">
+					<div class="progress"></div>
+					<div id="progress_top"></div>
+				</div>
+			</div>
+			<div class="bottom-cont">
+				<div class="font-container">
+					<span data-size="0">A-</span>
+					<span data-size="1" class="active">A</span>
+					<span data-size="2">A+</span>
+				</div>
+				<div class="color-container">
+					<span data-size="0"></span>
+					<span data-size="1" style="background: white;"></span>
+				</div>
+			</div>
+		</div>
+		<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/lzTxt.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var canvas = document.getElementById("canvas");
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			var winSize = {
+				width: window.innerWidth,
+				height : window.innerHeight
+			}
+			
+		</script>
+		<script src="js/hidpi-canvas.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		
+			
+			
+			var ctx = canvas.getContext("2d");
+			/*字体尺寸*/
+			var font = {
+				size: 18
+			}
+//			/*面板尺寸*/
+//			var panel = {
+//				col: Math.floor(canvas.width / font.size),//列数
+//				row: Math.floor(canvas.height / font.size),//行数
+//				space: 2,
+//			}
+
+			ctx.fillStyle = "black";
+			ctx.font = font.size + "px 微软雅黑";
+//			ctx.fillText("顺四方上下曰宇。宇虽有实，而无定处可求。往古来今曰宙。宙虽有增长，不知其始之所至。",0,font.size);
+//			var str_write = txt.t;
+//			var str_write_list = str_write.split("\r\n");
+			
+//			lzTxt.init({
+//				origin_txt : txt.t,
+//				width : canvas.width,
+//				height : canvas.height
+//			});
+//			
+//			
+//			var current = 1;
+//			document.addEventListener("click",function(e){
+//				var x = e.pageX;
+//				var page = current;
+//				if(x > canvas.width / 2){
+//					drawImage();
+//					page ++;
+//				}else{
+//					drawImage();
+//					page --;
+//				}
+//				lzTxt.render(page) && (current = page);
+//			});
+//			lzTxt.render(1);
+//			
+			
+			
+
+			/*
+			 * 翻页动画
+			 */
+			function drawImage(direction){
+				
+				var src = canvas.toDataURL("image/png");
+				var img = document.createElement("img");
+				img.src = src;
+				img.width = winSize.width;
+				img.height = winSize.height;
+				img.style.position = "absolute";
+				img.style.top = "0px";
+				img.style.left = "0px";
+				img.style.background = "white";
+				document.body.appendChild(img);
+				var draw_inteval;
+				draw_inteval = setInterval(function(){
+					var left = img.offsetLeft;
+					if(direction == 1){
+						if(left < - winSize.width){
+							clearInterval(draw_inteval);
+						}
+						
+						img.style.left = (left - canvas.width / 24) + "px";
+					}else if(direction == 3){
+						if(left > winSize.width){
+							clearInterval(draw_inteval);
+						}
+						
+						img.style.left = (left + canvas.width / 24) + "px";
+					}
+					
+				},1000 / 45);
+			}
+
+
+			function getStyle(dom,styleName){
+				if(dom.currentStyle){//ie 
+					return dom.currentStyle[styleName]; 
+				}else{ //ff 
+					var $arr=dom.ownerDocument.defaultView.getComputedStyle(dom, null); 
+					return $arr[styleName]; 
+				} 
+			}
+			
+			/*背景和字体配色方案*/
+			var arr_bg = [{
+				bg: "blanchedalmond",
+				txt: "#333333"
+			},{
+				bg: "white",
+				txt: "#333333"
+			}];
+			var arr_bg_index = 0;//当前使用的配色方案序列
+			
+//			var pop = document.getElementById("pop");
+//			console.log(getStyle(pop,"display"));
+
+			/*为配色方案选择添加事件*/
+			var span_list = document.querySelectorAll(".color-container span");
+			for(var i = 0 ; i < span_list.length ; ++i){
+				var elem = span_list[i];
+				elem.addEventListener("click",function(e){
+					e.preventDefault();
+					e.stopPropagation();
+					
+					var index = this.getAttribute("data-size");
+					arr_bg_index = index;
+					lzTxt.re_render();//调用重绘
+				},false);
+			}
+						
+			document.getElementById("next").onchange = function(e){
+				document.getElementById("showchange").style.display = "none";
+//				start_loading();//开始loging动画
+				var file = this.files[0];
+
+				var reader = new FileReader();
+		        reader.readAsText(file,"gb2312");
+		        console.time("onload");
+		        reader.onprogress = function(e){
+		        	console.log(e.loaded / e.total);
+		        }
+		        reader.onload = function(e){
+		        	console.timeEnd("onload");
+		          	var result =  this.result ;
+
+					console.time("init");
+	          		lzTxt.init({
+						origin_txt : result,
+						panel: {
+							width : winSize.width,
+							height : winSize.height,
+						},
+						fontSize : font.size,
+						
+//						hook_page_start: start_loading,//开始分页计算
+						hook_page_end: function(){
+							lzTxt.render(1);
+//							end_loading();//结束loading动画
+						},//结束分页计算
+						
+						page_draw_start: function(){
+							ctx.fillStyle = arr_bg[arr_bg_index].bg;
+							ctx.fillRect(0,0,canvas.width,canvas.height);
+							ctx.fillStyle = arr_bg[arr_bg_index].txt;
+							
+							ctx.font = lzTxt.get_font_size() + "px 微软雅黑";
+						}
+					});
+					console.timeEnd("init");
+					
+					var current = 1;
+					var pop_show = false;
+					/*添加全局点击事件处理*/
+					document.addEventListener("click",function(e){
+						e.preventDefault();
+
+						var x = e.pageX;
+						var y = e.pageY;
+						var pop = document.getElementById("pop");
+						if(getStyle(pop,"display") == "block"){
+							pop.style.display = "none";
+							return ;
+						}
+						
+						/*点击中心区域展示配置*/
+						if(x < winSize.width * 0.8 && x > winSize.width * 0.2 && y > winSize.height * 0.4 && y < winSize.height * 0.6){
+							pop.style.display = "block";
+							var page = document.getElementById("page");
+							var total = document.getElementById("total");
+							var obj = lzTxt.get_progress();
+							page.innerHTML = obj.page;
+							total.innerHTML = obj.total;
+							var progress_top = document.getElementById("progress_top");
+							progress_top.style.width = (obj.page / obj.total * 100) + "%";
+							return ;
+						}
+						
+						/*页面切换*/
+						var page = current;
+						if(x > winSize.width / 2){
+							page ++;
+							drawImage(1);
+						}else{
+							page --;
+							if(page > 0)
+								drawImage(3);
+						}
+						lzTxt.render(page) && (current = page);
+					},false);
+					
+					/*为字体方案选择添加事件*/
+					var span_list = document.querySelectorAll(".font-container span");
+					for(var i = 0 ; i < span_list.length ; ++i){
+						var elem = span_list[i];
+						elem.addEventListener("click",function(e){
+							e.preventDefault();
+//							e.stopPropagation();
+							
+							for(var j = 0 ; j < span_list.length ; ++j){
+								var elem1 = span_list[j];
+								elem1.className = "";
+							}
+							
+							this.className = "active";
+							var index = this.getAttribute("data-size");
+							lzTxt.reRender(index);
+						},false);
+					};
+//					reader.abort();
+					lzTxt.render(1);
+		        };
+
+			};
+			
+			/*
+			 *因加载文件会出现页面卡住现象，特意加上loading动画
+			 * 经过多方测试，发现此时间段并不能绘制，仍在摸索中。。。
+			 * 欢迎大家提供解决方案
+			 */
+			(function(){
+				/*绘制加载中动画*/
+				function draw_loading(start_angle){
+					ctx.clearRect(0,0,canvas.width,canvas.height);
+					
+					ctx.beginPath();
+					ctx.fillStyle = "aquamarine";
+					ctx.moveTo(canvas.width / 2,canvas.height / 2);
+					ctx.arc(canvas.width / 2,canvas.height / 2,60,start_angle,2  * Math.PI);
+					ctx.fill();
+					
+					ctx.beginPath();
+					ctx.fillStyle = "white";
+					ctx.moveTo(canvas.width / 2,canvas.height / 2);
+					ctx.arc(canvas.width / 2,canvas.height / 2,50,start_angle,2  * Math.PI);
+					ctx.fill();
+				}
+				
+				var angle_invterval;
+				function start_loading(){
+					var start_ang = 0;
+					angle_invterval = setInterval(function(){
+						var angle = Math.PI * 2 * ((90 - start_ang) / 90);
+		
+						draw_loading(angle);
+						++start_ang;
+						start_ang %= 90;
+					},1000 / 60);
+					draw_loading(start_ang);
+				}
+				
+				function end_loading(){
+					window.clearInterval(angle_invterval);
+				}
+				
+				window.start_loading = start_loading;
+				window.end_loading = end_loading;
+			})();
+			
+		</script>
+	</body>
+</html>
